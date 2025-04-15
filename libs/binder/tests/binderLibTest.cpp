@@ -59,6 +59,7 @@ using namespace std::string_literals;
 using namespace std::chrono_literals;
 using android::base::testing::HasValue;
 using android::base::testing::Ok;
+using android::base::unique_fd;
 using testing::ExplainMatchResult;
 using testing::Matcher;
 using testing::Not;
