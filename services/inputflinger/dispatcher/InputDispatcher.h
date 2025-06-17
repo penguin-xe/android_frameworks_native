@@ -698,8 +698,8 @@ private:
             REQUIRES(mLock);
     std::map<int32_t /*displayId*/, InputVerifier> mVerifiersByDisplay;
     bool afterKeyEventLockedInterruptable(const std::shared_ptr<Connection>& connection,
-                                          DispatchEntry* dispatchEntry, KeyEntry& keyEntry,
-                                          bool handled) REQUIRES(mLock);
+                                          DispatchEntry* dispatchEntry, bool handled)
+            REQUIRES(mLock);
     bool afterMotionEventLockedInterruptable(const std::shared_ptr<Connection>& connection,
                                              DispatchEntry* dispatchEntry, MotionEntry& motionEntry,
                                              bool handled) REQUIRES(mLock);
