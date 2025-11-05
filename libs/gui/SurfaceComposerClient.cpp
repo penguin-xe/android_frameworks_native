@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/*
+ * Changes from Qualcomm Technologies, Inc. are provided under the following license:
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: BSD-3-Clause-Clear
+ */
+
 #define LOG_TAG "SurfaceComposerClient"
 
 #include <semaphore.h>
@@ -377,7 +383,6 @@ void TransactionCompletedListener::onTransactionCompleted(ListenerStats listener
             }
             auto& [callbackFunction, callbackSurfaceControls] = callbacksMap[callbackId];
             if (!callbackFunction) {
-                ALOGE("cannot call null callback function, skipping");
                 continue;
             }
             std::vector<SurfaceControlStats> surfaceControlStats;
@@ -394,6 +399,11 @@ void TransactionCompletedListener::onTransactionCompleted(ListenerStats listener
 
             callbackFunction(transactionStats.latchTime, transactionStats.presentFence,
                              surfaceControlStats);
+
+            // More than one transaction may contain the same callback id. Erase the callback from
+            // the map to ensure that it is only called once. This can happen if transactions are
+            // parcelled out of process and applied in both processes.
+            callbacksMap.erase(callbackId);
         }
 
         // handle on complete callbacks
@@ -1751,6 +1761,42 @@ SurfaceComposerClient::Transaction& SurfaceComposerClient::Transaction::unsetBuf
     return *this;
 }
 
+SurfaceComposerClient::Transaction& SurfaceComposerClient::Transaction::setReferenceSpaceType(
+        const sp<SurfaceControl>& sc,
+        const gui::RenderLayerReferenceSpaceType& referenceSpaceType) {
+    return *this;
+}
+
+SurfaceComposerClient::Transaction& SurfaceComposerClient::Transaction::setCompositionLayerType(
+        const sp<SurfaceControl>& sc, const gui::CompositionLayerType& compositionLayerType) {
+    return *this;
+}
+
+SurfaceComposerClient::Transaction& SurfaceComposerClient::Transaction::setPose(
+        const sp<SurfaceControl>& sc, const gui::Pose& pose) {
+    return *this;
+}
+
+SurfaceComposerClient::Transaction& SurfaceComposerClient::Transaction::setQuadSize(
+        const sp<SurfaceControl>& sc, float width, float height) {
+    return *this;
+}
+
+SurfaceComposerClient::Transaction& SurfaceComposerClient::Transaction::setFrustum(
+        const sp<SurfaceControl>& sc, const gui::Frustum& frustum) {
+    return *this;
+}
+
+SurfaceComposerClient::Transaction& SurfaceComposerClient::Transaction::setPlaneEquation(
+        const sp<SurfaceControl>& sc, const gui::PlaneEquation& planeEquation) {
+    return *this;
+}
+
+SurfaceComposerClient::Transaction& SurfaceComposerClient::Transaction::setLayerVisibilityType(
+        const sp<SurfaceControl>& sc, const gui::LayerVisibilityType& layerVisibilityType) {
+    return *this;
+}
+
 void SurfaceComposerClient::Transaction::setReleaseBufferCallback(BufferData* bufferData,
                                                                   ReleaseBufferCallback callback) {
     if (!callback) {
@@ -3045,6 +3091,11 @@ std::optional<DisplayDecorationSupport> SurfaceComposerClient::getDisplayDecorat
         });
     }
     return support;
+}
+
+status_t SurfaceComposerClient::setDisplayConfig(const sp<IBinder>& display,
+                                                 gui::DisplayDeviceConfig& displayDeviceConfig) {
+    return NO_ERROR;
 }
 
 int SurfaceComposerClient::getGpuContextPriority() {

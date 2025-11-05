@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
+/*
+ * Changes from Qualcomm Technologies, Inc. are provided under the following license:
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: BSD-3-Clause-Clear
+ */
+
 #include "Constants.h"
+
 #include "MockConsumer.h"
 
 #include <gtest/gtest.h>
@@ -1027,6 +1034,12 @@ public:
 
     binder::Status getStalledTransactionInfo(
             int32_t /*pid*/, std::optional<gui::StalledTransactionInfo>* /*result*/) override {
+        return binder::Status::ok();
+    }
+
+    binder::Status setDisplayConfig(
+            const sp<IBinder>& /*displayToken*/,
+            const gui::DisplayDeviceConfig& /*displayDeviceConfig*/) override {
         return binder::Status::ok();
     }
 
